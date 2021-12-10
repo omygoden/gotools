@@ -1,6 +1,7 @@
 package sfslice
 
 import (
+	"sort"
 	"strconv"
 )
 
@@ -48,4 +49,28 @@ func SliceStrToSliceInt64(s []string) []int64 {
 		i[k] = int64(ii)
 	}
 	return i
+}
+
+//切片正序
+func SliceSort(slice interface{}) {
+	switch slice.(type) {
+	case []string:
+		sort.Strings(slice.([]string))
+	case []int:
+		sort.Ints(slice.([]int))
+	case []float64:
+		sort.Float64s(slice.([]float64))
+	}
+}
+
+//切片倒序
+func SliceSortReverse(slice interface{}) {
+	switch slice.(type) {
+	case []string:
+		sort.Sort(sort.Reverse(sort.StringSlice(slice.([]string))))
+	case []int:
+		sort.Sort(sort.Reverse(sort.IntSlice(slice.([]int))))
+	case []float64:
+		sort.Sort(sort.Reverse(sort.Float64Slice(slice.([]float64))))
+	}
 }
