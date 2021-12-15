@@ -5,6 +5,7 @@ import (
 	"crypto/sha1"
 	"crypto/sha256"
 	"encoding/hex"
+	"golang.org/x/crypto/bcrypt"
 	"strconv"
 )
 
@@ -51,4 +52,20 @@ func Sha256(p interface{}) string {
 	}
 
 	return hex.EncodeToString(hash.Sum(nil))
+}
+
+//生成hash密码
+func HashPwdGenerate(pwd string) string {
+	hashPwd, _ := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.MinCost)
+
+	return string(hashPwd)
+}
+
+//验证码hash密码
+func HashPwdVerify(hashPwd string, pwd string) bool {
+	res := bcrypt.CompareHashAndPassword([]byte(hashPwd), []byte(pwd))
+	if res != nil {
+		return false
+	}
+	return true
 }
