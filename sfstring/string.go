@@ -2,8 +2,12 @@ package sfstring
 
 import (
 	"fmt"
+	"github.com/omygoden/gotools/sfconst"
+	"github.com/omygoden/gotools/sfrand"
 	"math"
 	"strings"
+	"sync"
+	"time"
 )
 
 //判断字符串是否包含切片中的其中一个
@@ -37,4 +41,24 @@ func Letters(num int) []string {
 		}
 		return res
 	}
+}
+
+//生成订单号
+//支持万级并发不重复
+var UniqueNoMap = make(map[string]int)
+var UniqueNoMapMute sync.Mutex
+
+func GenerateUniqueNo(prefixs ...string) string {
+	UniqueNoMapMute.Lock()
+	defer UniqueNoMapMute.Unlock()
+	var prefix string
+	if len(prefixs) > 0 {
+		prefix = prefixs[0]
+	}
+	m := time.Now().UnixMicro() - time.Now().Unix()*1000000
+	s := prefix + time.Now().Format(sfconst.GO_TIME_WITH_FULL) + fmt.Sprintf("%06d", m) + fmt.Sprintf("%d", sfrand.RandRange(1000, 9999))
+	if _, ok := UniqueNoMap[s]; ok {
+		return GenerateUniqueNo(prefixs...)
+	}
+	return s
 }
